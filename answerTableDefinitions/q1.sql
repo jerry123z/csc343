@@ -68,6 +68,11 @@ CREATE VIEW stats as
       party_position.left_right, party_position.state_market, party_position.liberty_authority
     from century_combined join party_position on party_position.party_id = century_combined.party_id;
 
+DROP VIEW IG EXISTS avg_election CASCADE;
+CREATE VIEW avg_election as
+    SELECT century, country, UNIQUE(party_id), avg(left_right) as left_right, avg(state_market) as state_market, avg(party_position) as party_position
+    from stats;
+
 -- the answer to the query
 -- insert into q1
 --   SELECT *
