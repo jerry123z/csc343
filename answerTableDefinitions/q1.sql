@@ -35,13 +35,16 @@ CREATE VIEW election_winners as
 
 DROP VIEW IF EXISTS election_winners_unique CASCADE;
 CREATE VIEw election_winners_unique as
-    select distict election_id, party_id from election_winners;
+    select DISTINCT election_id, party_id from election_winners;
 
 DROP VIEW IF EXISTS country_names CASCADE;
 CREATE VIEW country_names as
     select country.name as country, election_winners_unique.party_id, election_winners.election_id
-    from election_winners join election_winners_unique
-        on election_winners_unique.party_id = party.id;
+    from election_winners_unique join party
+        on election_winners_unique.party_id = party.id
+    join country
+        on party.country_id = country.id;
+
 
 -- the answer to the query
 -- insert into q1
