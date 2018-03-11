@@ -29,7 +29,7 @@ CREATE VIEW country_cycle as
 
 DROP VIEW IF EXISTS both_e_dates CASCADE;
 CREATE VIEW both_e_dates as
-  select p1.id, p1.country_id, p1.e_date as curr_e_date, p1.previous_election_id,
+  select p1.id, p1.country_id, p1.e_date as curr_e_date, p1.previous_parliament_election_id,
   p2.e_date as prev_e_date, country_cycle.name, country_cycle.election_cycle
   from parliamentary_elections as p1 join parliamentary_elections as p2
   on p1.previous_parliament_election_id = p2.id
