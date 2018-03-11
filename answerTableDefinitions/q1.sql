@@ -23,7 +23,6 @@ CREATE VIEW parliamentary_elections as
     from election
     where e_type = 'Parliamentary election';
 
-
 DROP VIEW IF EXISTS election_winners CASCADE;
 CREATE VIEW election_winners as
     select parliamentary_elections.id as election_id, cabinet_party.party_id
@@ -54,7 +53,7 @@ CREATE VIEW century_20th as
 
 DROP VIEW IF EXISTS century_21st CASCADE;
 CREATE VIEW century_21st as
-    select CAST('20' as VARCHAR(2)) as century, country_names.country, country_names.party_id, country_names.election_id
+    select CAST('21' as VARCHAR(2)) as century, country_names.country, country_names.party_id, country_names.election_id
     from country_names join election
         on country_names.election_id = election.id
     where election.e_date >= '2001-01-01';
@@ -63,7 +62,11 @@ DROP VIEW IF EXISTS century_combined CASCADE;
 CREATE VIEW century_combined as
     (select * from century_20th) UNION ALL (select * from century_21st);
 
-
+DROP VIEW IF EXISTS stats CASCADE;
+CREATE VIEW stats as
+    SELECT  century_combined.century, century_combined.country, century_combined.party_id, century_combined.election_id,
+      party_position.left_right, party_position.state_market, party_position.liberty_authority
+    from century_combined join party_position on party_position.party_id = century_combined.party_id;
 
 -- the answer to the query
 -- insert into q1
