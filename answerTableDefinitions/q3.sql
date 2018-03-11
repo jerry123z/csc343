@@ -16,8 +16,8 @@ most_recent_on_cycle DATE
 DROP VIEW IF EXISTS intermediate_step CASCADE;
 
 -- Define views for your intermediate steps here.
-DROP VIEW IF EXISTS parlamentary_elections CASCADE;
-CREATE VIEW parlamentary_elections as
+DROP VIEW IF EXISTS parliamentary_elections CASCADE;
+CREATE VIEW parliamentary_elections as
   select id, country_id, e_date, previous_parliament_election_id
   FROM election
   where e_type = 'Parliamentary election';
@@ -29,12 +29,19 @@ CREATE VIEW country_cycle as
 
 DROP VIEW IF EXISTS both_e_dates CASCADE;
 CREATE VIEW both_e_dates as
-  select p1.id, p1.country_id, p1.e_date as curr_e_date, p1.previous_parliament_election_id,
+  select p1.id, p1.country_id, p1.e_date as curr_e_date, p1.prev_election_id,
   p2.e_date as prev_e_date, country_cycle.name, country_cycle.election_cycle
-  from parlamentary_elections as p1 join parlamentary_elections as p2
+  from parliamentary_elections as p1 join parliamentary_elections as p2
   on p1.previous_parliament_election_id = p2.id
   join country_cycle
    on country_cycle.id = p1.country_id;
+
+DROP VIEW IF EXISTS dissolutions CASCADE;
+CREATE VIEW dissolutions as
+  select *
+  from both_e_dates
+  where DATEDIFF ( year , curr_e_date , prev_e_date ) = election_cycle ;
+
 
 -- the answer to the query
 -- insert into q3
