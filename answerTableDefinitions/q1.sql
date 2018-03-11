@@ -39,11 +39,31 @@ CREATE VIEw election_winners_unique as
 
 DROP VIEW IF EXISTS country_names CASCADE;
 CREATE VIEW country_names as
-    select country.name as country, election_winners_unique.party_id, election_winners.election_id
+    select country.name as country, election_winners_unique.party_id, election_winners_unique.election_id
     from election_winners_unique join party
         on election_winners_unique.party_id = party.id
     join country
         on party.country_id = country.id;
+
+DROP VIEW IF EXISTS century_20th CASCADE;
+CREATE VIEW century_20th as
+    select CAST('20' as VARCHAR(2)) as century, country_names.country, country_names.party_id, country_names.election_id
+    from country_names join election
+        on country_names.election_id = election.id
+    where election.e_date >= '1901-01-01' and election.e_date < '2001-01-01';
+
+DROP VIEW IF EXISTS century_21st CASCADE;
+CREATE VIEW century_21st as
+    select CAST('20' as VARCHAR(2)) as century, country_names.country, country_names.party_id, country_names.election_id
+    from country_names join election
+        on country_names.election_id = election.id
+    where election.e_date >= '2001-01-01';
+
+DROP VIEW IF EXISTS century CASCADE;
+CREATE VIEW century as
+    select century, country, party_id, election_id;
+    from century_20th UNION century_21st;
+
 
 
 -- the answer to the query
