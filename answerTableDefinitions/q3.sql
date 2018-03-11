@@ -54,9 +54,9 @@ CREATE VIEW max_dissolutions as
   from dissolutions
   GROUP BY name;
 
-DROP VIEW IF EXISTS on_dissolutions CASCADE;
+DROP VIEW IF EXISTS non_dissolutions CASCADE;
 CREATE VIEW non_dissolutions as
-  (both_e_dates) EXCEPT (dissolutions);
+  (select * from both_e_dates) EXCEPT (select * from dissolutions);
 
 DROP VIEW IF EXISTS count_non_dissolutions CASCADE;
 CREATE VIEW count_non_dissolutions as
