@@ -73,14 +73,14 @@ CREATE VIEW avg_election as
     SELECT century, country, election_id, avg(left_right) as left_right,
     avg(state_market) as state_market, avg(liberty_authority) as liberty_authority
     from stats
-    GROUP BY  election_id;
+    GROUP BY century, country, election_id;
 
 DROP VIEW IF EXISTS avg_country CASCADE;
-CREATE VIEW avg_election as
+CREATE VIEW avg_country as
     SELECT century, country, avg(left_right) as left_right,
     avg(state_market) as state_market, avg(liberty_authority) as liberty_authority
     from avg_election
-    GROUP BY  century, country;
+    GROUP BY century, country;
 
 -- the answer to the query
 -- insert into q1
