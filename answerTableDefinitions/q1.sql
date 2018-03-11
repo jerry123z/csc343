@@ -59,10 +59,9 @@ CREATE VIEW century_21st as
         on country_names.election_id = election.id
     where election.e_date >= '2001-01-01';
 
-DROP VIEW IF EXISTS century CASCADE;
-CREATE VIEW century as
-    select century, country, party_id, election_id;
-    from century_20th UNION century_21st;
+DROP VIEW IF EXISTS century_combined CASCADE;
+CREATE VIEW century_combined as
+    (select * from century_20th) UNION ALL (select * from century_21st);
 
 
 
