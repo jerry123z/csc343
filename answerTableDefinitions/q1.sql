@@ -40,7 +40,7 @@ CREATE VIEw election_winners_unique as
 DROP VIEW IF EXISTS country_names CASCADE;
 CREATE VIEW country_names as
     select country.name as country, election_winners_unique.party_id, election_winners.election_id
-    from election_winners natural join election_winners_unique
+    from election_winners join election_winners_unique
         on election_winners_unique.party_id = party.id;
 
 -- the answer to the query
