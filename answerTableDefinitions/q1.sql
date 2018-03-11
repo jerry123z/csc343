@@ -14,7 +14,7 @@ liberty_authority REAL
 
 -- You may find it convenient to do this for each of the views
 -- that define your intermediate steps.  (But give them better names!)
-DROP VIEW IF EXISTS intermediate_step CASCADE;
+-- DROP VIEW IF EXISTS intermediate_step CASCADE;
 
 -- Define views for your intermediate steps here.
 DROP VIEW IF EXISTS parliamentary_elections CASCADE;
@@ -32,6 +32,10 @@ CREATE VIEW election_winners as
     join cabinet_party
         on cabinet.id = cabinet_party.cabinet_id
     where cabinet_party.pm = true;
+
+DROP VIEW IF EXISTS election_winners_unique CASCADE;
+CREATE VIEw election_winners_unique as
+    select distict election_id, party_id from election_winners;
 
 DROP VIEW IF EXISTS country_names CASCADE;
 CREATE VIEW country_names as
@@ -92,6 +96,6 @@ CREATE VIEW alliance_stats_with_details as
 
 
 -- the answer to the query
---insert into q1
+-- insert into q1
 --   SELECT *
 --   FROM election_winners;
