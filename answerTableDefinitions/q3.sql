@@ -36,11 +36,15 @@ CREATE VIEW both_e_dates as
   join country_cycle
    on country_cycle.id = p1.country_id;
 
-DROP VIEW IF EXISTS dissolutions CASCADE;
-CREATE VIEW dissolutions as
+DROP VIEW IF EXISTS non_dissolutions CASCADE;
+CREATE VIEW non_dissolutions as
   select *
   from both_e_dates
-  where (curr_e_date - prev_e_date)< (365 * election_cycle) or (curr_e_date - prev_e_date)< (365 * (election_cycle + 1));
+  where (curr_e_date - prev_e_date) > (365 * election_cycle) and (curr_e_date - prev_e_date) < (365 * (election_cycle + 1));
+
+DROP VIEW IF EXISTS dissolutions CASCADE;
+CREATE VIEW dissolutions as
+    (select * from both_e_dates) EXCEPT (select * from non_dissolutions);
 
 DROP VIEW IF EXISTS count_dissolutions CASCADE;
 CREATE VIEW count_dissolutions as
@@ -53,10 +57,6 @@ CREATE VIEW max_dissolutions as
   select DISTINCT name, max(curr_e_date) as most_recent_dissolution
   from dissolutions
   GROUP BY name;
-
-DROP VIEW IF EXISTS non_dissolutions CASCADE;
-CREATE VIEW non_dissolutions as
-  (select * from both_e_dates) EXCEPT (select * from dissolutions);
 
 DROP VIEW IF EXISTS count_non_dissolutions CASCADE;
 CREATE VIEW count_non_dissolutions as
