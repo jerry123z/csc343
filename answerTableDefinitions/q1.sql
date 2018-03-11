@@ -83,6 +83,6 @@ CREATE VIEW avg_country as
     GROUP BY century, country;
 
 -- the answer to the query
--- insert into q1
---   SELECT *
---   FROM election_winners;
+insert into q1
+   SELECT *
+   FROM avg_country;
