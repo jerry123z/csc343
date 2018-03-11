@@ -42,6 +42,29 @@ CREATE VIEW dissolutions as
   from both_e_dates
   where (curr_e_date - prev_e_date)< (365 * election_cycle) or (curr_e_date - prev_e_date)< (365 * (election_cycle + 1));
 
+DROP VIEW IF EXISTS count_dissolutions CASCADE;
+CREATE VIEW count_dissolutions as
+  select DISTINCT name, count(id) as num_dissolutions
+  from dissolutions;
+
+DROP VIEW IF EXISTS max_dissolutions CASCADE;
+CREATE VIEW max_dissolutions as
+  select DISTINCT name, max(curr_e_date) as most_recent_dissolution
+  from dissolutions;
+
+DROP VIEW IF EXISTS on_dissolutions CASCADE;
+CREATE VIEW non_dissolutions as
+  (both_e_dates) EXCEPT (dissolutions);
+
+DROP VIEW IF EXISTS count_non_dissolutions CASCADE;
+CREATE VIEW count_non_dissolutions as
+  select DISTINCT name, count(id) as num_on_cycle
+  from non_dissolutions;
+
+DROP VIEW IF EXISTS max_non_dissolutions CASCADE;
+CREATE VIEW max_non_dissolutions as
+  select DISTINCT name, max(curr_e_date) as most_recent_on_cycle
+  from non_dissolutions;
 
 -- the answer to the query
 -- insert into q3
