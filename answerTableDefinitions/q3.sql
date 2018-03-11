@@ -36,15 +36,25 @@ CREATE VIEW both_e_dates as
   join country_cycle
    on country_cycle.id = p1.country_id;
 
-DROP VIEW IF EXISTS non_dissolutions CASCADE;
-CREATE VIEW non_dissolutions as
+DROP VIEW IF EXISTS under_dissolutions CASCADE;
+CREATE VIEW under_dissolutions as
   select *
   from both_e_dates
-  where (curr_e_date - prev_e_date) > (365 * election_cycle) and (curr_e_date - prev_e_date) < (365 * (election_cycle + 1));
+  where ((curr_e_date - prev_e_date) < (365 * election_cycle));
+
+DROP VIEW IF EXISTS over_dissolutions CASCADE;
+CREATE VIEW over_dissolutions as
+  select *
+  from both_e_dates
+  where ((curr_e_date - prev_e_date) > (365 * (election_cycle + 1)));
 
 DROP VIEW IF EXISTS dissolutions CASCADE;
 CREATE VIEW dissolutions as
-    (select * from both_e_dates) EXCEPT (select * from non_dissolutions);
+  (select * from under_dissolutions) UNION (select * from over_dissolutions);
+
+DROP VIEW IF EXISTS non_dissolutions CASCADE;
+CREATE VIEW non_dissolutions as
+    (select * from both_e_dates) EXCEPT (select * from dissolutions);
 
 DROP VIEW IF EXISTS count_dissolutions CASCADE;
 CREATE VIEW count_dissolutions as
