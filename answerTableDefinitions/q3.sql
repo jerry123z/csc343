@@ -80,5 +80,14 @@ CREATE VIEW max_non_dissolutions as
   from non_dissolutions
   GROUP BY name;
 
+DROP VIEW IF EXISTS final CASCADE;
+CREATE VIEW final as
+  select dissolutions.name as country, count_dissolutions as num_dissolutions,
+  max_dissolutions as most_recent_dissolution, count_non_dissolutions as num_on_cycle,
+  max_dissolutions as most_recent_on_cycle
+  from max_dissolutions join count_dissolutions on name
+  join count_non_dissolutions on name
+  join max_non_dissolutions on name;
+
 -- the answer to the query
 -- insert into q3
