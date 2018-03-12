@@ -30,7 +30,6 @@ CREATE VIEW election_result_no_null as
 
 DROP VIEW IF EXISTS alliance_sum_votes CASCADE;
 CREATE VIEW alliance_sum_votes as
-  (select * from fixed_nulls) UNION (select * from election_result_no_null);
   select fixed_nulls.party_id,
   fixed_nulls.election_id,
   fixed_nulls.alliance_id,
