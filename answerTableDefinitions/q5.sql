@@ -69,19 +69,52 @@ CREATE VIEW election_winners_results_better as
 
 DROP VIEW IF EXISTS election_winners_sum_votes CASCADE;
 CREATE VIEW election_winners_sum_votes as
-    select election_id,  alliance_id, SUM(votes)
+    select election_id,  alliance_id, SUM(votes) as votes
     from election_winners_results_better
     group by election_id, alliance_id;
 
 DROP VIEW IF EXISTS alliances_sum_votes CASCADE;
 CREATE VIEW alliances_sum_votes as
-    select election_id,  alliance_id, SUM(votes)
+    select election_id,  alliance_id, SUM(votes) as votes
     from election_results_better
     group by election_id, alliance_id;
 
 DROP VIEW IF EXISTS alliances_sum_votes_no_winners CASCADE;
 CREATE VIEW alliances_sum_votes_no_winners as
-  (alliances_sum_votes) except (election_winners_sum_votes);
+  (select * from alliances_sum_votes) except (select * from election_winners_sum_votes);
 
+DROP VIEW IF EXISTS alliances_join_winners CASCADE;
+CREATE VIEW alliances_join_winners as
+  select election_winners_sum_votes.election_id,
+  election_winners_sum_votes.alliance_id as winner_id,
+  election_winners_sum_votes.votes as winner_votes,
+  alliances_sum_votes_no_winners.alliance_id as opp_id,
+  alliances_sum_votes_no_winners.votes as opp_votes
+  from election_winners_sum_votes join alliances_sum_votes_no_winners
+  where alliances_sum_votes_no_winners.election_id = election_winners_sum_votes.election_id;
+
+DROP VIEW IF EXISTS close_calls CASCADE;
+CREATE VIEw close_calls as
+  select election_id as electionID, winner_id, opp_id
+  from alliances_join_winners
+  where opp_votes/winner_votes < 0.1;
+
+DROP VIEW IF EXISTS close_calls_winner CASCADE;
+CREATE VIEW close_calls_winner as
+  select electionID, country_id, name as winningParty, opp_id
+  from close_calls join party_id
+  on winner_id = id;
+
+DROP VIEW IF EXISTS close_calls_opp CASCADE;
+CREATE VIEW close_calls_opp as
+  select electionID, country_id, winningParty, name as closeRunnerUp
+  from close_calls_winner join party_id
+  on opp_id = id;
+
+DROP VIEW IF EXISTS close_calls_country CASCADE;
+CREATE VIEW close_calls_country as
+  select electionID, name, winningParty, closeRunnerUp
+  from close_calls_opp join country
+  on country_id = id;
 -- the answer to the query
 --insert into q5
