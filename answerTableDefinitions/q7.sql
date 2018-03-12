@@ -90,6 +90,33 @@ CREATE VIEW num_european_elections_after_first_per_country as
   from european_elections
   group by country_id;
 
+DROP VIEW IF EXISTS distinct_party_wins_per_ep_election CASCADE;
+CREATE VIEW distinct_party_wins_per_ep_election as
+  select distinct party_id, country_id, previous_ep_election_id
+  from parties_with_wins_before_after_european_election;
+
+DROP VIEW IF EXISTS num_party_wins CASCADE;
+CREATE VIEW num_party_wins as
+  select party_id, country_id, count(previous_ep_election_id) as num_elections
+  from distinct_party_wins_per_ep_election
+  group by party_id, country_id
+
+DROP VIEW IF EXISTS strong_parties CASCADE;
+CREATE VIEW strong_parites as
+  select party_id
+  from num_party_wins
+  where EXISTS (
+    select *
+    from num_european_elections_after_first_per_country
+    where num_european_elections_after_first_per_country.num_elections = num_party_wins.num_elections
+  );
+
+  DROP VIEW IF EXISTS final CASCADE;
+  CREATE VIEW final as
+    select strong_families.party_id, family
+    from strong_parites join party_family
+      on strong_parites.party_id = party_family.party_id;
+
 --DROP VIEW IF EXISTS party_wins_per_european_election CASCADE;
 --CREATE VIEW party_wins_per_european_election as
 
