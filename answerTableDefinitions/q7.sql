@@ -41,7 +41,7 @@ CREATE VIEW european_elections as
 
 DROP VIEW IF EXISTS european_parliament_countries;
 CREATE VIEW european_parliament_countries as
-  select UNIQUE country_id
+  select DISTINCT country_id
   from european_elections;
 
 DROP VIEW IF EXISTS party_wins_after_first_european_election CASCADE;
@@ -51,7 +51,7 @@ create view party_wins_after_first_european_election as
   from parliamentary_election_winners_unique join election
     on parliamentary_election_winners_unique.election_id = election.id
   join european_elections
-    on european_elections.previous_ep_election_id = election.previous_ep_election_id
+    on european_elections.previous_ep_election_id = election.previous_ep_election_id;
 
 DROP VIEW IF EXISTS party_wins_before_first_european_election CASCADE;
 create view party_wins_before_first_european_election as
@@ -66,15 +66,24 @@ create view party_wins_before_first_european_election as
   where EXISTS (
     select *
     from european_parliament_countries
-    where european_elections.country_id = european_parliament_countries;
+    where european_elections.country_id = european_parliament_countries.county_id
   );
 
-DROP VIEW IF EXISTS party_wins_before_european_election CASCADE;
-CREATE VIEW party_wins_before_european_election as
-  (select * from party_wins_before_first_european_election) Union
-  (select * from party_wins_after_first_european_election);
+DROP VIEW IF EXISTS parties_with_wins_before_after_european_election CASCADE;
+CREATE VIEW parties_with_wins_before_after_european_election as
+  select distinct id, party_id
+  from (select id, party_id from party_wins_before_first_european_election) INTERSECT
+  (select id, party_id from party_wins_after_first_european_election);
 
-DROP VIEW IF EXISTS
+DROP VIEW IF EXISTS num_european_elections_per_country CASCADE;
+CREATE VIEW num_european_elections_per_country as
+  select country_id, count(country_id) as num_elections
+  from european_elections
+  group by county_id;
+
+--DROP VIEW IF EXISTS party_wins_per_european_election CASCADE;
+--CREATE VIEW party_wins_per_european_election as
+
 
 -- the answer to the query
 --insert into q7
