@@ -23,7 +23,7 @@ CREATE VIEW fixed_nulls as
 
 DROP VIEW IF EXISTS election_result_no_null CASCADE;
 CREATE VIEW election_result_no_null as
-  select id, election_id, party_id, alliance_id, SUM(votes)
+  select id, election_id, alliance_id, SUM(votes)
   from election_result
   where alliance_id is not NULL
   group by election_id, alliance_id;
@@ -62,7 +62,7 @@ CREATE VIEW election_winners_fixed_nulls as
 
 DROP VIEW IF EXISTS election_winners_result_no_null CASCADE;
 CREATE VIEW election_winners_result_no_null as
-  select election_id, party_id, alliance_id, SUM(votes) as votes
+  select election_id, alliance_id, SUM(votes) as votes
   from election_winners_result
   where alliance_id is not NULL
   group by election_id, alliance_id;
