@@ -103,9 +103,8 @@ CREATE VIEW strong_year as
   from parties_with_year_elected_after_first join elections_with_dates
     on prev_date <= parties_with_year_elected_after_first.year and curr_date> parties_with_year_elected_after_first.year;
 
-
-DROP VIEW IF exists strong_party CASCADE;
-CREATE VIEW party_id as
+DROP VIEW IF exists strong_parties CASCADE;
+CREATE VIEW strong_parties as
   select party_id, count(year) as dist_elected
   from strong_year
   group by party_id;
