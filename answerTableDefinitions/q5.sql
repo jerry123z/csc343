@@ -91,7 +91,7 @@ CREATE VIEW alliances_join_winners as
   select election_winners_sum_votes.election_id,
   election_winners_sum_votes.party_id as winner_id,
   election_winners_sum_votes.votes as winner_votes,
-  alliances_sum_votes_max.parrty_id as opp_id,
+  alliances_sum_votes_max.party_id as opp_id,
   alliances_sum_votes_max.votes as opp_votes
   from election_winners_sum_votes join alliances_sum_votes_max
     on alliances_sum_votes_max.election_id = election_winners_sum_votes.election_id;
