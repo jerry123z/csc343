@@ -91,7 +91,7 @@ CREATE VIEW alliances_join_winners as
   alliances_sum_votes_no_winners.alliance_id as opp_id,
   alliances_sum_votes_no_winners.votes as opp_votes
   from election_winners_sum_votes join alliances_sum_votes_no_winners
-  where alliances_sum_votes_no_winners.election_id = election_winners_sum_votes.election_id;
+    on alliances_sum_votes_no_winners.election_id = election_winners_sum_votes.election_id;
 
 DROP VIEW IF EXISTS close_calls CASCADE;
 CREATE VIEw close_calls as
