@@ -90,4 +90,5 @@ CREATE VIEW final as
   left join max_non_dissolutions on country_cycle.name = max_non_dissolutions.name;
 
 -- the answer to the query
--- insert into q3
+insert into q3
+  select * from final;
