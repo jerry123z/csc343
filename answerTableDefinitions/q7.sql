@@ -87,7 +87,7 @@ CREATE VIEW parties_with_wins_before_after_european_election as
 
 DROP VIEW IF EXISTS parties_with_year_elected_after_first CASCADE;
 CREATE VIEW parties_with_year_elected_after_first as
-  select distinc extract (year from parties_with_wins_before_after_european_election.e_date) as year,
+  select distinct extract (year from parties_with_wins_before_after_european_election.e_date) as year,
   parties_with_wins_before_after_european_election.party_id
   from parties_with_wins_before_after_european_election;
 
@@ -97,15 +97,21 @@ CREATE VIEW elections_with_dates as
   from european_elections as e1 join european_elections as e2
   on e1.previous_ep_election_id = e2.id;
 
-DROP VIEW IF EXISTS strong_parties CASCADE;
-CREATE VIEW strong_parties as
-  select party_id, count(party_id) as dist_elected
+DROP VIEW IF EXISTS strong_year CASCADE;
+CREATE VIEW strong_year as
+  select Distinct party_id, curr_date as year
   from parties_with_year_elected_after_first
   where EXISTS(
     select *
     from elections_with_dates
     where prev_date <= parties_with_year_elected_after_first.year and curr_date> parties_with_year_elected_after_first.year
-  )
+  );
+
+
+DROP VIEW IF exists strong_party CASCADE;
+CREATE VIEW party_id as
+  select party_id, count(year) as dist_elected
+  from strong_year
   group by party_id;
 
 DROP VIEW IF EXISTS num_eu_elections CASCADE;
