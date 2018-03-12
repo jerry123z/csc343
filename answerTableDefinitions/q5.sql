@@ -35,7 +35,7 @@ CREATE VIEW alliance_sum_votes as
   fixed_nulls.alliance_id,
   fixed_nulls.votes + election_result_no_null.votes as votes
   from election_result_no_null join fixed_nulls
-  on election_result_no_null.election_id = result_fixed_nulls.election_id;
+  on election_result_no_null.election_id = fixed_nulls.election_id;
 
 DROP VIEW IF EXISTS election_winners CASCADE;
 CREATE VIEW election_winners as
