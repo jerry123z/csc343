@@ -99,10 +99,10 @@ DROP VIEW IF EXISTS num_party_wins CASCADE;
 CREATE VIEW num_party_wins as
   select party_id, country_id, count(previous_ep_election_id) as num_elections
   from distinct_party_wins_per_ep_election
-  group by party_id, country_id
+  group by party_id, country_id;
 
 DROP VIEW IF EXISTS strong_parties CASCADE;
-CREATE VIEW strong_parites as
+CREATE VIEW strong_parties as
   select party_id
   from num_party_wins
   where EXISTS (
@@ -113,7 +113,7 @@ CREATE VIEW strong_parites as
 
   DROP VIEW IF EXISTS final CASCADE;
   CREATE VIEW final as
-    select strong_families.party_id, family
+    select strong_parties.party_id, family
     from strong_parites join party_family
       on strong_parites.party_id = party_family.party_id;
 
