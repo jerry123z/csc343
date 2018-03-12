@@ -79,7 +79,7 @@ CREATE VIEW election_winners_sum_votes as
 
 DROP VIEW IF EXISTS alliances_sum_votes_no_winners CASCADE;
 CREATE VIEW alliances_sum_votes_no_winners as
-  (select * from alliances_sum_votes) except (select * from election_winners_sum_votes);
+  (select * from alliance_sum_votes) except (select * from election_winners_sum_votes);
 
 DROP VIEW IF EXISTS alliances_sum_votes_max CASCADE;
 CREATE VIEW alliances_sum_votes_max as
