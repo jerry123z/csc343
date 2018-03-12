@@ -5,8 +5,8 @@ drop table if exists q7 cascade;
 
 DROP TABLE IF EXISTS q7 CASCADE;
 CREATE TABLE q7(
-partyId INT, 
-partyFamily VARCHAR(50) 
+partyId INT,
+partyFamily VARCHAR(50)
 );
 
 -- You may find it convenient to do this for each of the views
@@ -14,7 +14,11 @@ partyFamily VARCHAR(50)
 DROP VIEW IF EXISTS intermediate_step CASCADE;
 
 -- Define views for your intermediate steps here.
+DROP VIEW IF EXISTS european_electtions CASCADE;
+CREATE VIEW european_electtions as
+  select *
+  from election
+  where e_type = 'European Parlament';
 
-
--- the answer to the query 
-insert into q7 
+-- the answer to the query
+--insert into q7
