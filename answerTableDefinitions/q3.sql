@@ -84,10 +84,10 @@ DROP VIEW IF EXISTS final CASCADE;
 CREATE VIEW final as
   select max_dissolutions.name as country, num_dissolutions,
    most_recent_dissolution, num_on_cycle, most_recent_on_cycle
-  from country_cycle natural left join max_dissolutions on country_cycle.name = max_dissolutions.name
-  natural left join count_dissolutions on country_cycle.name = count_dissolutions.name
-  natural left join count_non_dissolutions on country_cycle.name = count_non_dissolutions.name
-  natural left join max_non_dissolutions on country_cycle.name = max_non_dissolutions.name;
+  from country_cycle left join max_dissolutions on country_cycle.name = max_dissolutions.name
+  left join count_dissolutions on country_cycle.name = count_dissolutions.name
+  left join count_non_dissolutions on country_cycle.name = count_non_dissolutions.name
+  left join max_non_dissolutions on country_cycle.name = max_non_dissolutions.name;
 
 -- the answer to the query
 -- insert into q3
