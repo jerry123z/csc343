@@ -46,7 +46,7 @@ CREATE VIEw election_winners_unique as
 
 DROP VIEW IF EXISTS election_winners_result CASCADE;
 CREATE VIEw election_winners_result as
-    select id, election_result.election_id, election_resutl.party_id, id as alliance_id, seats, votes
+    select id, election_result.election_id, election_result.party_id, id as alliance_id, seats, votes
     from election_winners_unique join election_result
     on election_winners_unique.election_id = election_result.election_id
     and election_winners_unique.party_id = election_result.party_id;
@@ -68,14 +68,14 @@ CREATE VIEW election_winners_results_better as
   (select * from election_winners_fixed_nulls) UNION (select * from election_winners_result_no_null);
 
 DROP VIEW IF EXISTS election_winners_sum_votes CASCADE;
-CREATE VIEW election_winners_sum_votes;
-    select election_id,  alliance_id, SUM(votes),
+CREATE VIEW election_winners_sum_votes as
+    select election_id,  alliance_id, SUM(votes)
     from election_winners_results_better
     group by election_id, alliance_id;
 
 DROP VIEW IF EXISTS alliances_sum_votes CASCADE;
 CREATE VIEW alliances_sum_votes as
-    select election_id,  alliance_id, SUM(votes),
+    select election_id,  alliance_id, SUM(votes)
     from election_results_better
     group by election_id, alliance_id;
 
