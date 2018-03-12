@@ -27,8 +27,8 @@ CREATE VIEW election_result_no_null as
   from election_result
   where alliance_id is not NULL;
 
-DROP VIEW IF EXISTS election_result_better;
-CREATE VIEW election_result_better as
+DROP VIEW IF EXISTS election_results_better;
+CREATE VIEW election_results_better as
   (select * from fixed_nulls) UNION (select * from election_result_no_null);
 
 DROP VIEW IF EXISTS alliances_sum;
@@ -38,4 +38,4 @@ CREATE VIEW alliances_sum as
   group by election_id, alliance_id;
 
 -- the answer to the query
-insert into q5
+--insert into q5
