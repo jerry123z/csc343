@@ -72,8 +72,8 @@ create view party_wins_before_first_european_election as
 DROP VIEW IF EXISTS parties_with_wins_before_after_european_election CASCADE;
 CREATE VIEW parties_with_wins_before_after_european_election as
   select distinct id, party_id
-  from (select id, party_id from party_wins_before_first_european_election as before) INTERSECT
-  (select id, party_id from party_wins_after_first_european_election as after));
+  from (select id, party_id from party_wins_before_first_european_election)as before INTERSECT
+  (select id, party_id from party_wins_after_first_european_election)as before;
 
 DROP VIEW IF EXISTS num_european_elections_per_country CASCADE;
 CREATE VIEW num_european_elections_per_country as
