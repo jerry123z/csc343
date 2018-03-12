@@ -54,8 +54,8 @@ CREATE VIEw election_winners_result as
     on election_winners.election_id = election_result.election_id
     and election_winners.party_id = election_result.party_id;
 
-DROP VIEW IF EXISTS election_winners_fixed_nulls CASCADE;
-CREATE VIEW election_winners_fixed_nulls as
+DROP VIEW IF EXISTS election_winners_result_fixed_nulls CASCADE;
+CREATE VIEW election_winners_result_fixed_nulls as
   select election_id, party_id, id as alliance_id, seats, votes
   from election_winners_result
   where alliance_id is NULL;
