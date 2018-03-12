@@ -15,54 +15,45 @@ closeRunnerUp VARCHAR(100)
 --DROP VIEW IF EXISTS intermediate_step CASCADE;
 
 -- Define views for your intermediate steps here.
-DROP VIEW IF EXISTS fixed_nulls CASCADE;
-CREATE VIEW fixed_nulls as
-  select id, election_id, party_id, id as alliance_id, votes
-  from election_result
-  where alliance_id is NULL;
-
-DROP VIEW IF EXISTS election_result_no_null CASCADE;
-CREATE VIEW election_result_no_null as
-  select election_id, alliance_id, SUM(votes) as votes
-  from election_result
-  where alliance_id is not NULL
-  group by election_id, alliance_id;
-
-DROP VIEW IF EXISTS alliance_sum_votes CASCADE;
-CREATE VIEW alliance_sum_votes as
-  select fixed_nulls.party_id,
-  fixed_nulls.election_id,
-  fixed_nulls.alliance_id,
-  fixed_nulls.votes + election_result_no_null.votes as votes
-  from election_result_no_null join fixed_nulls
-  on election_result_no_null.election_id = fixed_nulls.election_id;
-
 DROP VIEW IF EXISTS election_winners CASCADE;
 CREATE VIEW election_winners as
-    select election.id as election_id, cabinet_party.party_id
-    from election join cabinet
-        on election.id = cabinet.election_id
-    join cabinet_party
-        on cabinet.id = cabinet_party.cabinet_id
-    where cabinet_party.pm = true;
+  select election.id as election_id, cabinet_party.party_id
+  from election join cabinet
+      on election.id = cabinet.election_id
+  join cabinet_party
+      on cabinet.id = cabinet_party.cabinet_id
+  where cabinet_party.pm = true;
 
 DROP VIEW IF EXISTS election_winners_result CASCADE;
 CREATE VIEw election_winners_result as
-    select id, election_result.election_id, election_result.party_id, election_result.alliance_id, seats, votes
-    from election_winners join election_result
-    on election_winners.election_id = election_result.election_id
-    and election_winners.party_id = election_result.party_id;
+  select id, election_result.election_id, election_result.party_id, election_result.alliance_id, votes
+  from election_winners join election_result
+  on election_winners.election_id = election_result.election_id
+  and election_winners.party_id = election_result.party_id;
 
 DROP VIEW IF EXISTS election_winners_result_fixed_nulls CASCADE;
 CREATE VIEW election_winners_result_fixed_nulls as
-  select election_id, party_id, id as alliance_id, seats, votes
+  select election_id, party_id, id as alliance_id, votes
   from election_winners_result
+  where alliance_id is NULL;
+
+DROP VIEW IF EXISTS fixed_nulls CASCADE;
+CREATE VIEW fixed_nulls as
+  select election_id, party_id, id as alliance_id, votes
+  from election_result
   where alliance_id is NULL;
 
 DROP VIEW IF EXISTS election_winners_result_no_null CASCADE;
 CREATE VIEW election_winners_result_no_null as
   select election_id, alliance_id, SUM(votes) as votes
   from election_winners_result
+  where alliance_id is not NULL
+  group by election_id, alliance_id;
+
+DROP VIEW IF EXISTS election_result_no_null CASCADE;
+CREATE VIEW election_result_no_null as
+  select election_id, alliance_id, SUM(votes) as votes
+  from election_result
   where alliance_id is not NULL
   group by election_id, alliance_id;
 
@@ -75,6 +66,14 @@ CREATE VIEW election_winners_sum_votes as
   from election_winners_result_no_null join election_winners_result_fixed_nulls
   on election_winners_result_no_null.election_id = election_winners_result_fixed_nulls.election_id;
 
+DROP VIEW IF EXISTS alliance_sum_votes CASCADE;
+CREATE VIEW alliance_sum_votes as
+  select fixed_nulls.party_id,
+  fixed_nulls.election_id,
+  fixed_nulls.alliance_id,
+  fixed_nulls.votes + election_result_no_null.votes as votes
+  from election_result_no_null join fixed_nulls
+  on election_result_no_null.election_id = fixed_nulls.election_id;
 
 DROP VIEW IF EXISTS alliances_sum_votes_no_winners CASCADE;
 CREATE VIEW alliances_sum_votes_no_winners as
@@ -84,7 +83,7 @@ DROP VIEW IF EXISTS alliances_sum_votes_max CASCADE;
 CREATE VIEW alliances_sum_votes_max as
   select election_id, party_id,  alliance_id, MAX(votes) as votes
   from alliances_sum_votes_no_winners
-  group by election_id, party_id,alliance_id;
+  group by election_id, party_id, alliance_id;
 
 DROP VIEW IF EXISTS alliances_join_winners CASCADE;
 CREATE VIEW alliances_join_winners as
@@ -120,6 +119,5 @@ CREATE VIEW close_calls_country as
   from close_calls_opp join country
   on country_id = id;
 
--- the answer to the query
 insert into q5
   select * from close_calls_country;
