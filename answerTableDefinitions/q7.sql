@@ -33,20 +33,48 @@ DROP VIEW IF EXISTS parliamentary_election_winners_unique CASCADE;
 CREATE VIEw parliamentary_election_winners_unique as
     select DISTINCT election_id, party_id from parliamentary_election_winners;
 
-DROP VIEW IF EXISTS european_electtions CASCADE;
-CREATE VIEW european_electtions as
+DROP VIEW IF EXISTS european_elections CASCADE;
+CREATE VIEW european_elections as
   select id, country_id, previous_parliament_election_id, previous_ep_election_id
   from election
   where e_type = 'European Parliament';
 
-DROP VIEW IF EXISTS party_wins_before_european_elections CASCADE;
-create view party_wins_before_european_elections as
-  select election.id, party_id, european_electtions.country_id,
-  european_electtions.previous_parliament_election_id, european_electtions.previous_ep_election_id
+DROP VIEW IF EXISTS european_parliament_countries;
+CREATE VIEW european_parliament_countries as
+  select UNIQUE country_id
+  from european_elections;
+
+DROP VIEW IF EXISTS party_wins_after_first_european_election CASCADE;
+create view party_wins_after_first_european_election as
+  select election.id, party_id, european_elections.country_id,
+  european_elections.previous_parliament_election_id, european_elections.previous_ep_election_id
   from parliamentary_election_winners_unique join election
     on parliamentary_election_winners_unique.election_id = election.id
-  join european_electtions
-    on european_electtions.previous_ep_election_id = election.previous_ep_election_id;
+  join european_elections
+    on european_elections.previous_ep_election_id = election.previous_ep_election_id
+
+DROP VIEW IF EXISTS party_wins_before_first_european_election CASCADE;
+create view party_wins_before_first_european_election as
+  select election.id, party_id, european_elections.country_id,
+  european_elections.previous_parliament_election_id, european_elections.previous_ep_election_id
+  from parliamentary_election_winners_unique join election
+    on parliamentary_election_winners_unique.election_id = election.id
+  join european_elections
+    on european_elections.country_id = election.country_id
+    and european_elections.previous_ep_election_id IS NULL
+    and election.previous_ep_election_id IS NULL
+  where EXISTS (
+    select *
+    from european_parliament_countries
+    where european_elections.country_id = european_parliament_countries;
+  );
+
+DROP VIEW IF EXISTS party_wins_before_european_election CASCADE;
+CREATE VIEW party_wins_before_european_election as
+  (select * from party_wins_before_first_european_election) Union
+  (select * from party_wins_after_first_european_election);
+
+DROP VIEW IF EXISTS
 
 -- the answer to the query
 --insert into q7
