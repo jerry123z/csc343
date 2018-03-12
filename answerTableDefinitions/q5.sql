@@ -46,7 +46,7 @@ CREATE VIEw election_winners_unique as
 
 DROP VIEW IF EXISTS election_winners_result CASCADE;
 CREATE VIEw election_winners_result as
-    select id, election_result.election_id, election_result.party_id, id as alliance_id, seats, votes
+    select id, election_result.election_id, election_result.party_id, election_result.alliance_id, seats, votes
     from election_winners_unique join election_result
     on election_winners_unique.election_id = election_result.election_id
     and election_winners_unique.party_id = election_result.party_id;
@@ -102,13 +102,13 @@ CREATE VIEw close_calls as
 DROP VIEW IF EXISTS close_calls_winner CASCADE;
 CREATE VIEW close_calls_winner as
   select electionID, country_id, name as winningParty, opp_id
-  from close_calls join party_id
+  from close_calls join party
   on winner_id = id;
 
 DROP VIEW IF EXISTS close_calls_opp CASCADE;
 CREATE VIEW close_calls_opp as
-  select electionID, country_id, winningParty, name as closeRunnerUp
-  from close_calls_winner join party_id
+  select electionID, party.country_id, winningParty, name as closeRunnerUp
+  from close_calls_winner join party
   on opp_id = id;
 
 DROP VIEW IF EXISTS close_calls_country CASCADE;
