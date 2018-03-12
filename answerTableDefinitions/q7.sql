@@ -71,19 +71,24 @@ create view party_wins_before_first_european_election as
 
 DROP VIEW IF EXISTS inters;
 CREATE VIEW inters as
-  (select id, party_id from party_wins_before_first_european_election) INTERSECT
-  (select id, party_id from party_wins_after_first_european_election);
+  (select distinct party_id from party_wins_before_first_european_election) INTERSECT
+  (select distinct party_id from party_wins_after_first_european_election);
 
 DROP VIEW IF EXISTS parties_with_wins_before_after_european_election CASCADE;
 CREATE VIEW parties_with_wins_before_after_european_election as
-  select distinct id, party_id
-  from inters
+  select party_wins_after_first_european_election.id,
+  party_wins_after_first_european_election.party_id,
+  party_wins_after_first_european_election.country_id,
+  party_wins_after_first_european_election.previous_parliament_election_id,
+  party_wins_after_first_european_election.previous_ep_election_id
+  from inters join party_wins_after_first_european_election
+    on inters.party_id = party_wins_after_first_european_election.party_id;
 
-DROP VIEW IF EXISTS num_european_elections_per_country CASCADE;
-CREATE VIEW num_european_elections_per_country as
-  select country_id, count(country_id) as num_elections
+DROP VIEW IF EXISTS num_european_elections_after_first_per_country CASCADE;
+CREATE VIEW num_european_elections_after_first_per_country as
+  select country_id, count(country_id) - 1 as num_elections
   from european_elections
-  group by county_id;
+  group by country_id;
 
 --DROP VIEW IF EXISTS party_wins_per_european_election CASCADE;
 --CREATE VIEW party_wins_per_european_election as
