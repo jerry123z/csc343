@@ -100,12 +100,8 @@ CREATE VIEW elections_with_dates as
 DROP VIEW IF EXISTS strong_year CASCADE;
 CREATE VIEW strong_year as
   select Distinct party_id, curr_date as year
-  from parties_with_year_elected_after_first
-  where EXISTS(
-    select *
-    from elections_with_dates
-    where prev_date <= parties_with_year_elected_after_first.year and curr_date> parties_with_year_elected_after_first.year
-  );
+  from parties_with_year_elected_after_first join elections_with_dates
+    on prev_date <= parties_with_year_elected_after_first.year and curr_date> parties_with_year_elected_after_first.year;
 
 
 DROP VIEW IF exists strong_party CASCADE;
