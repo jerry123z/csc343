@@ -39,7 +39,7 @@ CREATE VIEW european_elections as
   from election
   where e_type = 'European Parliament';
 
-DROP VIEW IF EXISTS european_parliament_countries;
+DROP VIEW IF EXISTS european_parliament_countries CASCADE;
 CREATE VIEW european_parliament_countries as
   select DISTINCT country_id
   from european_elections;
@@ -66,7 +66,7 @@ create view party_wins_before_first_european_election as
   where EXISTS (
     select *
     from european_parliament_countries
-    where european_elections.country_id = european_parliament_countries.county_id
+    where european_elections.country_id = european_parliament_countries.country_id
   );
 
 DROP VIEW IF EXISTS parties_with_wins_before_after_european_election CASCADE;
