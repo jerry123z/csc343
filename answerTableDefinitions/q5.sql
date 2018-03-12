@@ -82,7 +82,7 @@ CREATE VIEW alliances_sum_votes_no_winners as
 
 DROP VIEW IF EXISTS alliances_sum_votes_max CASCADE;
 CREATE VIEW alliances_sum_votes_max as
-  select election_id,party_id,  alliance_id, MAX(votes) as votes
+  select election_id, party_id,  alliance_id, MAX(votes) as votes
   from alliances_sum_votes_no_winners
   group by election_id, party_id,alliance_id;
 
