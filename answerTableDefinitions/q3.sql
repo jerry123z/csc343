@@ -40,13 +40,13 @@ DROP VIEW IF EXISTS under_dissolutions CASCADE;
 CREATE VIEW under_dissolutions as
   select *
   from both_e_dates
-  where ((curr_e_date - prev_e_date) < (365 * election_cycle));
+  where extract(year from timestamp curr_e_date) - extract(year from timestamp prev_e_date) < election_cycle;
 
 DROP VIEW IF EXISTS over_dissolutions CASCADE;
 CREATE VIEW over_dissolutions as
   select *
   from both_e_dates
-  where ((curr_e_date - prev_e_date) > (365 * (election_cycle + 1)));
+  where extract(year from timestamp curr_e_date) - extract(year from timestamp prev_e_date) > election_cycle;
 
 DROP VIEW IF EXISTS dissolutions CASCADE;
 CREATE VIEW dissolutions as
