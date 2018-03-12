@@ -116,7 +116,7 @@ CREATE VIEW num_eu_elections AS
 
 DROP VIEW IF EXISTS final CASCADE;
 CREATE VIEW final as
-  select strong_parties.party_id, family
+  select strong_parties.party_id as partyID, family as partyFamily
   from strong_parties join num_eu_elections
     on strong_parties.dist_elected = num_eu_elections.goal
   join party_family
@@ -126,4 +126,6 @@ CREATE VIEW final as
 
 
 -- the answer to the query
---insert into q7
+insert into q7
+select *
+from final;
