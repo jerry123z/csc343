@@ -83,6 +83,12 @@ DROP VIEW IF EXISTS alliances_sum_votes_no_winners CASCADE;
 CREATE VIEW alliances_sum_votes_no_winners as
   (select * from alliances_sum_votes) except (select * from election_winners_sum_votes);
 
+DROP VIEW IF EXISTS alliances_sum_votes_max CASCADE;
+CREATE VIEW alliances_sum_votes_max as
+  select election_id,  alliance_id, MAX(votes) as votes
+  from alliances_sum_votes_no_winners
+  group by election_id, alliance_id;
+
 DROP VIEW IF EXISTS alliances_join_winners CASCADE;
 CREATE VIEW alliances_join_winners as
   select election_winners_sum_votes.election_id,
@@ -90,7 +96,7 @@ CREATE VIEW alliances_join_winners as
   election_winners_sum_votes.votes as winner_votes,
   alliances_sum_votes_no_winners.alliance_id as opp_id,
   alliances_sum_votes_no_winners.votes as opp_votes
-  from election_winners_sum_votes join alliances_sum_votes_no_winners
+  from election_winners_sum_votes join alliances_sum_votes_max
     on alliances_sum_votes_no_winners.election_id = election_winners_sum_votes.election_id;
 
 DROP VIEW IF EXISTS close_calls CASCADE;
@@ -117,4 +123,5 @@ CREATE VIEW close_calls_country as
   from close_calls_opp join country
   on country_id = id;
 -- the answer to the query
---insert into q5
+insert into q5
+  select * from close_calls_country;
